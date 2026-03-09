@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '@/redux/userSlice'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { API_BASE_URL } from '@/lib/constants'
 
-const navbar = () => {
+const Navbar = () => {
   const {user} = useSelector(store=>store.user)
   const accessToken = localStorage.getItem('accessToken')
   const dispatch = useDispatch()
@@ -15,7 +16,7 @@ const navbar = () => {
 
   const logoutHandler = async ()=>{
     try {
-      const res = await axios.post("http://localhost:8000/api/v1/user/logout", {},{
+      const res = await axios.post(`${API_BASE_URL}/api/v1/user/logout`, {},{
         headers:{
           Authorization:`Bearer ${accessToken}`
         }
@@ -24,9 +25,8 @@ const navbar = () => {
         toast.success(res.data.message)
         dispatch(setUser(null))
       }
-    } catch (error) {
-      console.log(error);
-      
+    } catch {
+      // Removed console.log for production
     }
   }
   return (
@@ -66,4 +66,4 @@ const navbar = () => {
   )
 }
 
-export default navbar
+export default Navbar

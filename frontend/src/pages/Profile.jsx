@@ -18,13 +18,11 @@ import userLogo from '../assets/user.jpeg'
 import { toast } from "sonner"
 import axios, { Axios } from "axios"
 import { setUser } from "@/redux/userSlice"
-import { useParams } from "react-router-dom"
+import { API_BASE_URL } from '@/lib/constants'
 
 
 const Profile = () => {
   const { user } = useSelector(store => store.user)
-const params = useParams()
-const userId = params.userId.replace(":", "")
 
   const [updateUser, setUpdateUser] = useState({
     firstName: user?.firstName,
@@ -67,10 +65,8 @@ const userId = params.userId.replace(":", "")
       if (file) {
         formData.append("file", file) //image file for backend muler
       }
-      console.log("TOKEN:", accessToken)
-      console.log("UserId",userId)
       const res = await axios.put(
-        `http://localhost:8000/api/v1/user/update/${user._id}`,
+        `${API_BASE_URL}/api/v1/user/update/${user._id}`,
         formData,
         {
           headers: {
@@ -84,8 +80,7 @@ const userId = params.userId.replace(":", "")
         toast.success(res.data.message)
         dispatch(setUser(res.data, user))
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
       toast.error("Failed to update profile")
 
 

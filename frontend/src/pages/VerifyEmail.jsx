@@ -1,18 +1,18 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { API_BASE_URL } from '@/lib/constants'
+
+/* eslint-disable react-hooks/set-state-in-effect */
 
 const VerifyEmail = () => {
   const { token } = useParams()
   const [status, setStatus] = useState('Verifying...')
   const navigate = useNavigate()
-  useEffect(() => {
-    verifyEmail()
-  }, { token })
 
-  const verifyEmail = async () => {
+  const verifyEmail = useCallback(async () => {
     try {
-      const res = await axios.post(`http://localhost:8000/api/v1/user/verify`, {}, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/user/verify`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -24,12 +24,16 @@ const VerifyEmail = () => {
         }, 2000);
       }
 
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // Removed console.log for production
       setStatus("❌ Verification failed, Please try again")
 
     }
-  }
+  }, [token, navigate])
+
+  useEffect(() => {
+    verifyEmail()
+  }, [verifyEmail])
   return (
     <div className='relative w-full h-[760px] bg-emerald-100 overflow-hidden'>
       <div className='min-h-screen flex items-center justify-center'>
